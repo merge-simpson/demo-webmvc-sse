@@ -41,13 +41,11 @@ public final class InquirySseSender {
             if (log.isEnabledForLevel(Level.DEBUG)) {
                 log.debug(STR."""
                         (stack trace) emitter 예외 정보
-
                         Emitter: \{emitter}
                         stack trace
                         \{message}""");
             }
         }
-
         return 0;
     }
 
