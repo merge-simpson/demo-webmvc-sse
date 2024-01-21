@@ -1,0 +1,13 @@
+app:
+  cors:
+    max-age: 1800
+    exposed-headers: "*"
+    log-level: info # automatically skipped, depending on SLF4J
+    allows-credentials: true
+
+    allowed:
+      methods: "*"
+      headers: "*"
+      origins:
+        - http://localhost:3000
+        - http://localhost:5000
