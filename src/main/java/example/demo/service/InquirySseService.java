@@ -43,7 +43,7 @@ public final class InquirySseService implements InquirySubscribeUseCase, Inquiry
     }
 
     private void sendTest(SseEmitter emitter) {
-        log.info("Connected Emitter(during sending for test): " + emitter);
+        log.info(STR."Connected Emitter(during sending for test): \{emitter}");
 
         // send:
         testSender.sendTestTo(emitter);

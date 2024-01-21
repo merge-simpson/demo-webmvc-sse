@@ -18,7 +18,7 @@ public final class TriggerApi {
     @PostMapping("/trigger")
     public void onFirebaseDbChanged(/* ... */) {
         InquirySseMessage messageObject = InquirySseMessage.builder()
-                .content("Example Data: " + UUID.randomUUID())
+                .content(STR."Example Data: \{UUID.randomUUID()}")
                 .time(Instant.now())
                 .build();
 

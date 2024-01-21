@@ -37,7 +37,7 @@ public final class InquirySseSender {
             return 1;
         } catch (IOException | IllegalStateException e) {
             String message = ExceptionUtil.stackTraceToString(e);
-            log.error("만료된 emitter: " + emitter);
+            log.error(STR."만료된 emitter: \{emitter}");
             if (log.isEnabledForLevel(Level.DEBUG)) {
                 log.debug(STR."""
                         (stack trace) emitter 예외 정보
