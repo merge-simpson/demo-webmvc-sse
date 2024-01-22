@@ -1,14 +1,15 @@
 package example.common.sse.emitter;
 
+import lombok.experimental.SuperBuilder;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.Instant;
 
-public abstract class AbstractSseEmitter<SELF extends AbstractSseEmitter<SELF, KEY>, KEY>
+public abstract class AbstractSseEmitter<KEY>
         extends SseEmitter
-        implements Comparable<SELF> {
-    KEY id;
-    Instant createdAt;
+        implements Comparable<AbstractSseEmitter<KEY>> {
+    protected KEY id;
+    protected Instant createdAt;
 
     /**
      *
