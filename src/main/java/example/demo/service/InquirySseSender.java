@@ -13,7 +13,11 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.StreamSupport;
 
+/**
+ * @deprecated
+ */
 @Slf4j
+@Deprecated(since = "몰라 걍 없애", forRemoval = true)
 public final class InquirySseSender {
 
     private final InquirySseMessage messageObject;

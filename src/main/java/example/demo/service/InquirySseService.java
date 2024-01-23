@@ -38,14 +38,14 @@ public final class InquirySseService implements InquirySubscribeUseCase, Inquiry
 
     @Override
     public void broadcast(InquirySseMessage messageObject) {
-        InquirySseSender sender = InquirySseSender.with(messageObject);
-        sender.sendTo(sseRepository.findAll());
+        InquiryNewSender.prepare()
+                .to(sseRepository.findAll())
+                .message(messageObject)
+                .send();
     }
 
     private void sendTest(SseEmitter emitter) {
         log.info(STR."Connected Emitter(during sending for test): \{emitter}");
-
-        // send:
         testSender.sendTestTo(emitter);
     }
 
