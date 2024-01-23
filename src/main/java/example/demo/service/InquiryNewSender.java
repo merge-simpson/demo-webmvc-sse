@@ -31,9 +31,8 @@ public record InquiryNewSender(
 
         AtomicInteger count = new AtomicInteger();
 
-        // foreach 내부에서 to의 원소가 삭제되면 forEach 길이가 변경되어 예외 발생
-        //  java.util.ConcurrentModificationException: null  => solved
-        //  - 일반 HashMap, HashSet 등 사용 시 -> ConcurrentHashMap 등으로 변환
+        // foreach 내부에서 to의 원소가 삭제되면 예외 발생(java.util.ConcurrentModificationException: null)
+        //  - 일반 HashMap, HashSet 등 사용 시 -> ConcurrentHashMap 등으로 전환 등
         //  - 지금은 repository 내에서 원본을 관리하고, 이곳에는 사본 사용 중. (solved)
         StreamSupport.stream(to.spliterator(), true)
                 .parallel()
@@ -53,11 +52,12 @@ public record InquiryNewSender(
                 log.info(STR."만료된 emitter: \{emitter}");
 
                 if (log.isEnabledForLevel(Level.DEBUG)) {
-                    log.debug(STR."""
-                                    (stack trace) emitter 예외 정보
-                                    Emitter: \{emitter}
-                                    stack trace
-                                    \{message}"""
+                    log.debug(
+                            STR."""
+                            (stack trace) emitter 예외 정보
+                            Emitter: \{emitter}
+                            stack trace
+                            \{message}"""
                     );
                 }
             }
