@@ -45,7 +45,7 @@ public record InquiryNewSender(
 
     public int send() {
         SseEventBuilder event = SseEmitter.event().id("sse-id")
-                .name("sse") // client event name. ex: eventSource.addEventListner("sse", ...)
+                .name("sse") // client event name. ex: eventSource.addEventListener("sse", ...)
                 .reconnectTime(60000L)
                 .data(message);
 
