@@ -14,7 +14,7 @@ public final class SseSubscribeApi {
 
     private final InquirySubscribeUseCase inquirySubscribeUseCase;
 
-    @GetMapping(path = "/v1/subscribe/inquiry", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(path = "/v1/events/inquiry/subscriptions", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribeForInquiry(/* (기본적으로) 파라미터 불필요 */ HttpServletResponse response) {
         // 리버스 프록시에서 불필요한 버퍼링을 방지
         response.addHeader("X-Accel-Buffering", "no");
