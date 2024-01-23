@@ -23,26 +23,6 @@ public record InquiryNewSender(
         return new InquiryNewSenderProxy();
     }
 
-    public static class InquiryNewSenderProxy {
-        private Iterable<? extends BaseSseEmitter> to;
-        private InquirySseMessage message;
-
-        public InquiryNewSenderProxy to(Iterable<? extends BaseSseEmitter> to) {
-            this.to = to;
-            return this;
-        }
-
-        public InquiryNewSenderProxy message(InquirySseMessage message) {
-            this.message = message;
-            return this;
-        }
-
-        public int send() {
-            InquiryNewSender sender = new InquiryNewSender(to, message);
-            return sender.send();
-        }
-    }
-
     public int send() {
         SseEventBuilder event = SseEmitter.event().id("sse-id")
                 .name("sse") // client event name. ex: eventSource.addEventListener("sse", ...)
@@ -82,5 +62,25 @@ public record InquiryNewSender(
                 }
             }
         };
+    }
+
+    public static class InquiryNewSenderProxy {
+        private Iterable<? extends BaseSseEmitter> to;
+        private InquirySseMessage message;
+
+        public InquiryNewSenderProxy to(Iterable<? extends BaseSseEmitter> to) {
+            this.to = to;
+            return this;
+        }
+
+        public InquiryNewSenderProxy message(InquirySseMessage message) {
+            this.message = message;
+            return this;
+        }
+
+        public int send() {
+            InquiryNewSender sender = new InquiryNewSender(to, message);
+            return sender.send();
+        }
     }
 }
