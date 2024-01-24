@@ -10,13 +10,19 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter.SseEventBuilder;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 @Slf4j
 public record InquiryNewSender(
-        @NonNull Iterable<? extends BaseSseEmitter> to,
+        @NonNull Collection<? extends BaseSseEmitter> to,
         @NonNull InquirySseMessage message
 ) {
     public static InquiryNewSenderProxy prepare() {
@@ -65,11 +71,11 @@ public record InquiryNewSender(
     }
 
     public static class InquiryNewSenderProxy {
-        private Iterable<? extends BaseSseEmitter> to;
+        private final Set<BaseSseEmitter> to = new ConcurrentSkipListSet<>();
         private InquirySseMessage message;
 
-        public InquiryNewSenderProxy to(Iterable<? extends BaseSseEmitter> to) {
-            this.to = to;
+        public InquiryNewSenderProxy to(Collection<? extends BaseSseEmitter> to) {
+            this.to.addAll(to);
             return this;
         }
 

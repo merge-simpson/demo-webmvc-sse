@@ -5,6 +5,7 @@ import example.common.sse.repository.SseRepository;
 import lombok.NonNull;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,7 +24,7 @@ public class InquirySseRepository implements SseRepository<BaseSseEmitter, Strin
     }
 
     @Override
-    public Iterable<? extends BaseSseEmitter> findAll() {
+    public Collection<? extends BaseSseEmitter> findAll() {
         return storage.values();
     }
 
