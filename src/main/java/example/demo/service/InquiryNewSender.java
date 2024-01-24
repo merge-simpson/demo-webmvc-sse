@@ -49,7 +49,7 @@ public record InquiryNewSender(
         Set<BaseSseEmitter> receivers = new ConcurrentSkipListSet<>(to); // 중복 제거
         SseEventBuilder event = SseEmitter.event()
                 .id("sse-id")
-                .name("sse") // client event name. ex: eventSource.addEventListener("sse", ...)
+                .name("sse") // event name for client. ex: eventSource.addEventListener("sse", ...)
                 .reconnectTime(60_000L)
                 .data(message);
 
