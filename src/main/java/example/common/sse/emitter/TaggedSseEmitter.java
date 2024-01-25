@@ -1,6 +1,7 @@
 package example.common.sse.emitter;
 
 import example.common.sse.tags.EmitterTag;
+import lombok.Builder;
 import lombok.NonNull;
 
 import java.util.Collection;
@@ -11,6 +12,7 @@ public class TaggedSseEmitter extends BaseSseEmitter {
 
     private final Set<EmitterTag> tags;
 
+    @Builder
     public TaggedSseEmitter(
             @NonNull String id,
             Long timeout,
