@@ -2,3 +2,7 @@ spring:
   config:
     import:
       - classpath:/app/cors/cors.yml
+
+logging:
+  level:
+    root: debug
