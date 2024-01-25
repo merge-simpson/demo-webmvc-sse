@@ -1,8 +1,10 @@
 package example.tagged.repository;
 
 import example.common.sse.emitter.TaggedSseEmitter;
-import example.common.sse.repository.SseRepository;
+import example.common.sse.repository.TaggedSseRepository;
 import example.common.sse.tags.EmitterTag;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,7 +14,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class DemoTaggedSseRepository implements SseRepository<TaggedSseEmitter, String> {
+@Repository("demoTaggedSseRepository")
+@Slf4j
+public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmitter, String> {
 
     private final Map<String, EmitterTag> tagsById = new ConcurrentHashMap<>();
     private final Map<String, EmitterTag> tagsByName = new ConcurrentHashMap<>();
@@ -21,14 +25,27 @@ public class DemoTaggedSseRepository implements SseRepository<TaggedSseEmitter, 
             = new ConcurrentHashMap<>();
 
     @Override
-    public <S extends TaggedSseEmitter> S save(S emitter) {
-        allEmitters.put(emitter.id(),  emitter);
-        emitter.tags()
-                .forEach((tag) -> {
-                    Set<TaggedSseEmitter> set = getOrInitTagSet(tag);
-                    set.add(emitter);
-                });
-        return null;
+    public TaggedSseEmitter save(TaggedSseEmitter emitter) {
+        TaggedSseEmitter previousEmitter = saveEmitterToMainStorageSync(emitter);
+
+        if (previousEmitter != null) {
+            removeEmitterFromTagSet(previousEmitter);
+        }
+
+        addEmitterToTagSet(emitter);
+
+        log.debug(
+                STR."""
+                Current Emitters Map(Saved):
+
+                * All: \{allEmitters}
+                * Tag ID Map: \{tagsById}
+                * Tag Name Map: \{tagsByName}
+                * Inverse Map: \{inverseMapByTags}
+                """
+        );
+
+        return emitter;
     }
 
     @Override
@@ -40,15 +57,16 @@ public class DemoTaggedSseRepository implements SseRepository<TaggedSseEmitter, 
     public void deleteById(String id) {
         TaggedSseEmitter emitter = allEmitters.get(id);
         allEmitters.remove(id);
-        emitter.tags()
-                .forEach((tag) -> inverseMapByTags.get(tag).remove(emitter));
+        removeEmitterFromTagSet(emitter);
     }
 
+    @Override
     public List<TaggedSseEmitter> findAllByTagId(String tagId) {
         EmitterTag tag = tagsById.get(tagId);
         return inverseMapByTags.get(tag).stream().toList();
     }
 
+    @Override
     public List<TaggedSseEmitter> findAllByTagName(String tagName) {
         EmitterTag tag = tagsByName.get(tagName);
         return inverseMapByTags.get(tag).stream().toList();
@@ -79,7 +97,7 @@ public class DemoTaggedSseRepository implements SseRepository<TaggedSseEmitter, 
         return set.stream().toList();
     }
 
-    private Set<TaggedSseEmitter> getOrInitTagSet(EmitterTag tag) {
+    private Set<TaggedSseEmitter> getTagSetOrInit(EmitterTag tag) {
         Set<TaggedSseEmitter> set = inverseMapByTags.get(tag);
 
         if (set == null) {
@@ -100,5 +118,36 @@ public class DemoTaggedSseRepository implements SseRepository<TaggedSseEmitter, 
         }
 
         return set;
+    }
+
+    /**
+     *
+     * @param emitter
+     * @return returns previous emitter if the ID is already exists.
+     * Or returns null, if there was no duplicated ID in the map.
+     */
+    private synchronized TaggedSseEmitter saveEmitterToMainStorageSync(TaggedSseEmitter emitter) {
+        return allEmitters.put(emitter.id(),  emitter);
+    }
+
+    private synchronized void addEmitterToTagSet(TaggedSseEmitter emitter) {
+        emitter.tags()
+                .forEach((tag) -> {
+                    Set<TaggedSseEmitter> set = getTagSetOrInit(tag);
+                    set.add(emitter);
+                });
+    }
+
+    /**
+     *
+     * @param emitter
+     */
+    private synchronized void removeEmitterFromTagSet(TaggedSseEmitter emitter) {
+        emitter
+                .tags()
+                .forEach((tag) -> {
+                    Set<TaggedSseEmitter> set = getTagSetOrInit(tag);
+                    set.remove(emitter);
+                });
     }
 }
