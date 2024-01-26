@@ -26,26 +26,27 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
 
     @Override
     public TaggedSseEmitter save(TaggedSseEmitter emitter) {
-        TaggedSseEmitter previousEmitter = allEmitters.put(emitter.id(), emitter);
+        synchronized (emitter) {
+            TaggedSseEmitter previousEmitter = allEmitters.put(emitter.id(), emitter);
 
-        if (previousEmitter != null) {
-            removeEmitterFromTagSet(previousEmitter);
+            if (previousEmitter != null) {
+                removeEmitterFromTagSet(previousEmitter);
+            }
+
+            addEmitterToTagSet(emitter);
+
+            log.debug(
+                    STR."""
+                    Current Emitters Map(Saved):
+                    * All: \{allEmitters}
+                    * Tag ID Map: \{tagsById}
+                    * Tag Name Map: \{tagsByName}
+                    * Inverse Map: \{inverseMapByTags}
+                    """
+            );
+
+            return emitter;
         }
-
-        addEmitterToTagSet(emitter);
-
-        log.debug(
-                STR."""
-                Current Emitters Map(Saved):
-
-                * All: \{allEmitters}
-                * Tag ID Map: \{tagsById}
-                * Tag Name Map: \{tagsByName}
-                * Inverse Map: \{inverseMapByTags}
-                """
-        );
-
-        return emitter;
     }
 
     @Override
@@ -56,8 +57,10 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
     @Override
     public void deleteById(String id) {
         TaggedSseEmitter emitter = allEmitters.get(id);
-        allEmitters.remove(id);
-        removeEmitterFromTagSet(emitter);
+        synchronized (emitter) {
+            allEmitters.remove(id);
+            removeEmitterFromTagSet(emitter);
+        }
     }
 
     @Override
