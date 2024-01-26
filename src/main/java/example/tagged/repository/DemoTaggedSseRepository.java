@@ -98,13 +98,13 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
     }
 
     private Set<TaggedSseEmitter> getTagSetOrInit(EmitterTag tag) {
-        Set<TaggedSseEmitter> set = inverseMapByTags.get(tag);
-
-        if (set == null) {
-            set = initTagSet(tag);
-        }
-
-        return set;
+        return inverseMapByTags.computeIfAbsent(tag, (k) -> {
+            var set = new ConcurrentSkipListSet<TaggedSseEmitter>();
+            inverseMapByTags.put(tag, set);
+            tagsById.put(tag.id(), tag);
+            tagsByName.put(tag.name(), tag);
+            return set;
+        });
     }
 
     private synchronized Set<TaggedSseEmitter> initTagSet(EmitterTag tag) {
@@ -126,8 +126,6 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
      * @return returns previous emitter if the ID is already exists.
      * Or returns null, if there was no duplicated ID in the map.
      */
-    private synchronized TaggedSseEmitter saveEmitterToMainStorageSync(TaggedSseEmitter emitter) {
-        return allEmitters.put(emitter.id(),  emitter);
     @Deprecated(since = "", forRemoval = true)
     private TaggedSseEmitter saveEmitterToMainStorageSync(TaggedSseEmitter emitter) {
         synchronized (allEmitters) {
