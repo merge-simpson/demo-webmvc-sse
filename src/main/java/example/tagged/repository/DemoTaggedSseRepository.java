@@ -32,7 +32,6 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
             if (previousEmitter != null) {
                 removeEmitterFromTagSet(previousEmitter);
             }
-
             addEmitterToTagSet(emitter);
 
             log.debug(
@@ -76,6 +75,7 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
 
     }
 
+    @Override
     public List<TaggedSseEmitter> findAllByTagIds(Collection<? extends String> tagIds) { // without duplication
         Set<TaggedSseEmitter> set = new HashSet<>();
 
@@ -89,6 +89,7 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
         return set.stream().toList();
     }
 
+    @Override
     public List<TaggedSseEmitter> findAllByTagNames(Collection<? extends String> tagNames) { // without duplication
         Set<TaggedSseEmitter> set = new HashSet<>();
 
@@ -102,9 +103,13 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
         return set.stream().toList();
     }
 
+    /**
+     * 이 태그에 대한 emitter set이 있다면 inverseMap에서 갖고 오고, 없다면 ConcurrentSkipListSet 생성.
+     */
     private Set<TaggedSseEmitter> getTagSetOrInit(EmitterTag tag) {
         return inverseMapByTags.computeIfAbsent(tag, (k) -> {
             var set = new ConcurrentSkipListSet<TaggedSseEmitter>();
+
             inverseMapByTags.put(tag, set);
             tagsById.put(tag.id(), tag);
             tagsByName.put(tag.name(), tag);
@@ -126,7 +131,7 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
     }
 
     /**
-     *
+     * 모든 inverseSetMap에 함께 등록
      * @param emitter
      */
     private void addEmitterToTagSet(TaggedSseEmitter emitter) {
@@ -138,8 +143,8 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
     }
 
     /**
-     *
-     * @param emitter
+     * 모든 inverseSetMap에서도 함께 삭제
+     * @param emitter 삭제할 emitter
      */
     private void removeEmitterFromTagSet(TaggedSseEmitter emitter) {
         synchronized (emitter) {
