@@ -107,19 +107,6 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
         });
     }
 
-    private synchronized Set<TaggedSseEmitter> initTagSet(EmitterTag tag) {
-        Set<TaggedSseEmitter> set = inverseMapByTags.get(tag);
-
-        if (set == null) {
-            set = new ConcurrentSkipListSet<>();
-            inverseMapByTags.put(tag, set);
-            tagsById.put(tag.id(), tag);
-            tagsByName.put(tag.name(), tag);
-        }
-
-        return set;
-    }
-
     /**
      * @deprecated 이 동작은 ConcurrentHashMap에서 자동으로 관리됨.
      * @param emitter
