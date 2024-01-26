@@ -133,12 +133,16 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
         }
     }
 
-    private synchronized void addEmitterToTagSet(TaggedSseEmitter emitter) {
-        emitter.tags()
-                .forEach((tag) -> {
-                    Set<TaggedSseEmitter> set = getTagSetOrInit(tag);
-                    set.add(emitter);
-                });
+    /**
+     *
+     * @param emitter
+     */
+    private void addEmitterToTagSet(TaggedSseEmitter emitter) {
+        synchronized (emitter) {
+            emitter
+                    .tags()
+                    .forEach((tag) -> getTagSetOrInit(tag).add(emitter));
+        }
     }
 
     /**
