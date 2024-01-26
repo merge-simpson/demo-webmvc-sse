@@ -75,6 +75,7 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
 
     public List<TaggedSseEmitter> findAllByTagIds(Collection<? extends String> tagIds) { // without duplication
         Set<TaggedSseEmitter> set = new HashSet<>();
+
         tagIds.forEach((tagId) -> {
             EmitterTag tag = tagsById.get(tagId);
             set.addAll(
@@ -87,6 +88,7 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
 
     public List<TaggedSseEmitter> findAllByTagNames(Collection<? extends String> tagNames) { // without duplication
         Set<TaggedSseEmitter> set = new HashSet<>();
+
         tagNames.forEach((tagId) -> {
             EmitterTag tag = tagsByName.get(tagId);
             set.addAll(
@@ -136,12 +138,11 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
      *
      * @param emitter
      */
-    private synchronized void removeEmitterFromTagSet(TaggedSseEmitter emitter) {
-        emitter
-                .tags()
-                .forEach((tag) -> {
-                    Set<TaggedSseEmitter> set = getTagSetOrInit(tag);
-                    set.remove(emitter);
-                });
+    private void removeEmitterFromTagSet(TaggedSseEmitter emitter) {
+        synchronized (emitter) {
+            emitter
+                    .tags()
+                    .forEach((tag) -> getTagSetOrInit(tag).remove(emitter));
+        }
     }
 }
