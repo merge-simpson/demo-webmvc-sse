@@ -26,7 +26,7 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
 
     @Override
     public TaggedSseEmitter save(TaggedSseEmitter emitter) {
-        TaggedSseEmitter previousEmitter = saveEmitterToMainStorageSync(emitter);
+        TaggedSseEmitter previousEmitter = allEmitters.put(emitter.id(), emitter);
 
         if (previousEmitter != null) {
             removeEmitterFromTagSet(previousEmitter);
@@ -121,13 +121,18 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
     }
 
     /**
-     *
+     * @deprecated 이 동작은 ConcurrentHashMap에서 자동으로 관리됨.
      * @param emitter
      * @return returns previous emitter if the ID is already exists.
      * Or returns null, if there was no duplicated ID in the map.
      */
     private synchronized TaggedSseEmitter saveEmitterToMainStorageSync(TaggedSseEmitter emitter) {
         return allEmitters.put(emitter.id(),  emitter);
+    @Deprecated(since = "", forRemoval = true)
+    private TaggedSseEmitter saveEmitterToMainStorageSync(TaggedSseEmitter emitter) {
+        synchronized (allEmitters) {
+            return allEmitters.put(emitter.id(),  emitter);
+        }
     }
 
     private synchronized void addEmitterToTagSet(TaggedSseEmitter emitter) {
