@@ -13,12 +13,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @NoArgsConstructor
 public class EachSseSenderExecutives {
     private final Set<SseEmitterEntry> entries = new ConcurrentSkipListSet<>();
+    private final AtomicBoolean isDisabled = new AtomicBoolean(false);
 
     public EachSseSenderExecutives(SseEmitterEntry... entries) {
         this.entries.addAll(Arrays.stream(entries).toList());
@@ -34,6 +36,11 @@ public class EachSseSenderExecutives {
     }
 
     public int send() {
+        if (isDisabled.getAndSet(true)) {
+            log.warn("이미 전송 메서드가 호출된 SSE sender입니다.");
+            return 0;
+        }
+
         AtomicInteger count = new AtomicInteger();
         entries.forEach((entry) -> {
             BaseSseEmitter emitter = entry.receiver();
