@@ -27,6 +27,10 @@ public class EachSseSenderExecutives {
     }
 
     public EachSseSenderExecutives append(SseEmitterEntry entry) {
+        if (isDisabled.get()) {
+            log.warn("이미 전송 메서드가 호출된 SSE sender에 대한 entry 등록 시도입니다. 등록이 무시됩니다.");
+            return this;
+        }
         entries.add(entry);
         return this;
     }
@@ -37,7 +41,7 @@ public class EachSseSenderExecutives {
 
     public int send() {
         if (isDisabled.getAndSet(true)) {
-            log.warn("이미 전송 메서드가 호출된 SSE sender입니다.");
+            log.warn("이미 전송 메서드가 호출된 SSE sender에 대한 send 시도입니다. 전송하지 않습니다.");
             return 0;
         }
 
@@ -71,6 +75,7 @@ public class EachSseSenderExecutives {
             }
         });
 
+        entries.clear();
         return count.get();
     }
 }
