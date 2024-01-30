@@ -3,7 +3,6 @@ package example.common.sse.sender;
 import example.common.sse.emitter.BaseSseEmitter;
 import example.common.sse.exception.SseSenderNestedException;
 import example.common.utils.ExceptionUtil;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,7 @@ public class EnBlocSseSenderExecutives {
     private final AtomicBoolean isDisabled;
     private final SseEventBuilder event;
 
-    @Builder(access = AccessLevel.PRIVATE)
+    @Builder
     private EnBlocSseSenderExecutives(String eventId, String eventName, Long reconnectTime, @NonNull Object payload) {
         this.to = new ConcurrentSkipListSet<>();
         this.isDisabled = new AtomicBoolean(false);
@@ -36,11 +35,9 @@ public class EnBlocSseSenderExecutives {
         if (eventId == null || eventId.isBlank()) {
             eventId = "sse-id";
         }
-
         if (eventName == null || eventName.isBlank()) {
             eventName = "sse";
         }
-
         if (reconnectTime == null || reconnectTime <= 0) {
             reconnectTime = 60_000L;
         }
