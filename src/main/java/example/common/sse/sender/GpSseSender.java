@@ -1,14 +1,13 @@
 package example.common.sse.sender;
 
 import example.common.sse.emitter.SseEmitterEntry;
-import example.common.sse.sender.EnBlocSseSenderExecutives.EnBlocSseSenderExecutivesBuilder;
 
 import java.util.Collection;
 
 /**
  * General Purpose SSE Sender
  */
-public class GpSseSender {
+public final class GpSseSender {
     public static EachSseSenderExecutives prepareEach() {
         return new EachSseSenderExecutives();
     }
