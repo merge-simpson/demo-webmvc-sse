@@ -1,8 +1,14 @@
 spring:
+  application:
+    name: sse-example-service
+
   config:
     import:
       - classpath:/app/cors/cors.yml
 
+  jpa:
+    open-in-view: false
+
 logging:
   level:
-    root: debug
+    root: info
