@@ -45,6 +45,10 @@ public class AtomicCounterRepository {
             return counterMap.remove(key);
         }
 
+        void clear(CharSequence key) {
+            counterMap.get(key).set(0);
+        }
+
         private AtomicInteger create(CharSequence key) {
             synchronized (counterMap) {
                 if (counterMap.get(key) != null) {
