@@ -9,30 +9,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Repository
 public class AtomicCounterRepository {
 
-    private final CounterMapHolder holder;
+    private final CounterMapProxy delegator;
 
     public AtomicCounterRepository() {
         super();
-        holder = new CounterMapHolder();
+        delegator = new CounterMapProxy();
     }
 
     public int incrementAndGet(CharSequence key) {
-        AtomicInteger counter = holder.getCounter(key);
+        AtomicInteger counter = delegator.getCounter(key);
         return counter.incrementAndGet();
     }
 
-    public int get(CharSequence key) {
-        return holder.getCounter(key).get();
+    public int getById(CharSequence id) {
+        return delegator.getCounter(id).get();
     }
 
     public int getAndDelete(CharSequence key) {
-        return holder.deleteCounter(key).get();
+        return delegator.deleteCounter(key).get();
     }
 
-    private static final class CounterMapHolder {
+    private static final class CounterMapProxy {
         private final Map<CharSequence, AtomicInteger> counterMap;
 
-        CounterMapHolder() {
+        CounterMapProxy() {
             counterMap = new ConcurrentHashMap<>();
         }
 
