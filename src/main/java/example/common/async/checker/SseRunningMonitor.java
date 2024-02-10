@@ -1,12 +1,14 @@
 package example.common.async.checker;
 
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@RequiredArgsConstructor
+/**
+ * @deprecated
+ */
+@Deprecated
 public final class SseRunningMonitor {
     private final int total;
     private final AtomicInteger successCounter;
@@ -18,6 +20,20 @@ public final class SseRunningMonitor {
 
     public SseRunningMonitor(int total) {
         this(total, new AtomicInteger(), new AtomicInteger(), new AtomicInteger(), new InstantHolder());
+    }
+
+    public SseRunningMonitor(
+            int total,
+            AtomicInteger successCounter,
+            AtomicInteger cancelledCounter,
+            AtomicInteger exceptionCounter,
+            InstantHolder lastUpdatedAt
+    ) {
+        this.total = total;
+        this.successCounter = successCounter;
+        this.cancelledCounter = cancelledCounter;
+        this.exceptionCounter = exceptionCounter;
+        this.lastUpdatedAt = lastUpdatedAt;
     }
 
     public SseRunningCapture capture() {
@@ -54,6 +70,7 @@ public final class SseRunningMonitor {
         if (isCompleted) {
             throw new RuntimeException("");
         }
+
         target.incrementAndGet();
         lastUpdatedAt.updateInstant();
         return updateStatus();
