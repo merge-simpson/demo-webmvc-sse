@@ -7,7 +7,7 @@ spring:
       - classpath:/app/cors/cors.yml
 
   jpa:
-    open-in-view: false
+    open-in-view: false # when using jpa with sse
 
 logging:
   level:
