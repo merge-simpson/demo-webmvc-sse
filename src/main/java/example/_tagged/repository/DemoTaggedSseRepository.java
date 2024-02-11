@@ -1,4 +1,4 @@
-package example.tagged.repository;
+package example._tagged.repository;
 
 import example.common.sse.emitter.TaggedSseEmitter;
 import example.common.sse.repository.TaggedSseRepository;
@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @Repository("demoTaggedSseRepository")
 @Slf4j
 public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmitter, String> {
-
     private final Map<String, EmitterTag> tagsById = new ConcurrentHashMap<>();
     private final Map<String, EmitterTag> tagsByName = new ConcurrentHashMap<>();
     private final Map<String, TaggedSseEmitter> allEmitters = new ConcurrentHashMap<>();
@@ -76,11 +75,11 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
     }
 
     @Override
-    public List<TaggedSseEmitter> findAllByTagIds(Collection<? extends String> tagIds) { // without duplication
+    public List<TaggedSseEmitter> findAllByTagIds(Collection<? extends CharSequence> tagIds) { // without duplication
         Set<TaggedSseEmitter> set = new HashSet<>();
 
         tagIds.forEach((tagId) -> {
-            EmitterTag tag = tagsById.get(tagId);
+            EmitterTag tag = tagsById.get(tagId.toString());
             set.addAll(
                     inverseMapByTags.get(tag)
             );
@@ -90,11 +89,11 @@ public class DemoTaggedSseRepository implements TaggedSseRepository<TaggedSseEmi
     }
 
     @Override
-    public List<TaggedSseEmitter> findAllByTagNames(Collection<? extends String> tagNames) { // without duplication
+    public List<TaggedSseEmitter> findAllByTagNames(Collection<? extends CharSequence> tagNames) { // without duplication
         Set<TaggedSseEmitter> set = new HashSet<>();
 
         tagNames.forEach((tagId) -> {
-            EmitterTag tag = tagsByName.get(tagId);
+            EmitterTag tag = tagsByName.get(tagId.toString());
             set.addAll(
                     inverseMapByTags.get(tag)
             );

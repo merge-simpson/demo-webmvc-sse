@@ -1,7 +1,7 @@
-package example.tagged.repository;
+package example._tagged.repository;
 
-import example.tagged.repository.types.CompletableFutureWrapper;
-import example.tagged.repository.types.FutureStatus;
+import example._tagged.repository.types.CompletableFutureWrapper;
+import example._tagged.repository.types.FutureStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 

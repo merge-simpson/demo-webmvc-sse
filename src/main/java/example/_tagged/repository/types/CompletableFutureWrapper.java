@@ -1,4 +1,4 @@
-package example.tagged.repository.types;
+package example._tagged.repository.types;
 
 import lombok.Builder;
 

@@ -1,4 +1,4 @@
-package example.tagged.usecase;
+package example._tagged.usecase;
 
 import example.common.sse.emitter.TaggedSseEmitter;
 import example.common.sse.tags.EmitterTag;
